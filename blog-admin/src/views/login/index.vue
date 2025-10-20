@@ -47,12 +47,12 @@
             </el-icon>
             账号登录
           </div>
-          <div class="tab-item" :class="{ active: loginType === 'qrcode' }" @click="loginType = 'qrcode'">
-            <el-icon>
-              <component :is="QrCode" />
-            </el-icon>
-            扫码登录
-          </div>
+<!--          <div class="tab-item" :class="{ active: loginType === 'qrcode' }" @click="loginType = 'qrcode'">-->
+<!--            <el-icon>-->
+<!--              <component :is="QrCode" />-->
+<!--            </el-icon>-->
+<!--            扫码登录-->
+<!--          </div>-->
         </div>
 
         <!-- 登录表单内容 -->
@@ -60,7 +60,7 @@
           <el-form v-if="loginType === 'account'" ref="loginFormRef" :model="loginForm" :rules="rules"
             @keyup.enter="handleLogin">
             <el-form-item prop="username">
-              <el-input v-model="loginForm.username" placeholder="请输入用户名" prefix-icon="User" />
+              <el-input v-model="loginForm.username" placeholder="请输入用户名/邮箱" prefix-icon="User" />
             </el-form-item>
             <el-form-item prop="password">
               <el-input v-model="loginForm.password" type="password" placeholder="请输入密码" prefix-icon="Lock"
@@ -69,7 +69,7 @@
 
             <div class="login-options">
               <el-checkbox v-model="rememberMe">记住我</el-checkbox>
-              <a href="#" class="forget-password">忘记密码？</a>
+              <a href="#" class="forget-password" @click="registerAdmin">立即注册</a>
             </div>
 
             <el-button :loading="loading" type="primary" class="login-button" @click="handleLogin">
@@ -106,20 +106,20 @@
         </transition>
 
         <!-- 社交登录 -->
-        <div class="social-login">
-          <div class="divider">其他登录方式</div>
-          <div class="social-icons">
-            <div class="social-icon" @click="handleSocialLogin('wechat')">
-              <svg-icon name="wechat" />
-            </div>
-            <div class="social-icon" @click="handleSocialLogin('qq')">
-              <svg-icon name="qq" />
-            </div>
-            <div class="social-icon" @click="handleSocialLogin('gitee')">
-              <svg-icon name="gitee" />
-            </div>
-          </div>
-        </div>
+<!--        <div class="social-login">-->
+<!--          <div class="divider">其他登录方式</div>-->
+<!--          <div class="social-icons">-->
+<!--            <div class="social-icon" @click="handleSocialLogin('wechat')">-->
+<!--              <svg-icon name="wechat" />-->
+<!--            </div>-->
+<!--            <div class="social-icon" @click="handleSocialLogin('qq')">-->
+<!--              <svg-icon name="qq" />-->
+<!--            </div>-->
+<!--            <div class="social-icon" @click="handleSocialLogin('gitee')">-->
+<!--              <svg-icon name="gitee" />-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
 
       <!-- 滑块验证 -->
@@ -180,8 +180,8 @@ const showSliderVerify = ref(false);
 const sliderVerifyRef = ref();
 
 const loginForm = reactive({
-  username: "test",
-  password: "123456",
+  username: "",
+  password: "",
   rememberMe: false,
   source: "ADMIN",
   nonceStr: "",
@@ -256,8 +256,8 @@ const handleLogin = async () => {
   });
 };
 
-const handleSocialLogin = (type: string) => {
-  ElMessage.success(type + "登录测试");
+const registerAdmin = () => {
+  ElMessage.info("管理系统注册功能暂不开放");
 };
 
 const refreshQrCode = async () => {
