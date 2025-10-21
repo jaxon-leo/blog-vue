@@ -300,7 +300,7 @@ const handleBatchDelete = () => {
 
 /** 删除按钮操作 */
 const handleDelete = (row: any) => {
-    ElMessageBox.confirm('是否确认删除编号为"' + row.id + '"的数据项?', "警告", {
+    ElMessageBox.confirm('是否确认删除邮箱为"' + row.email + '"的数据项?', "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
