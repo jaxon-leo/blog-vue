@@ -3,6 +3,22 @@
       <!-- 搜索表单 -->
       <div class="search-wrapper">
         <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <el-form-item label="用户id" prop="userId">
+            <el-input
+                v-model="queryParams.userId"
+                placeholder="请输入用户id"
+                clearable
+                @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email">
+            <el-input
+                v-model="queryParams.email"
+                placeholder="请输入邮箱"
+                clearable
+                @keyup.enter="handleQuery"
+            />
+          </el-form-item>
           <el-form-item label="用户名" prop="username">
             <el-input
               v-model="queryParams.username"
@@ -27,13 +43,15 @@
           style="width: 100%"
         >
           <el-table-column type="selection"  width="55" align="center" />
-          <el-table-column label="会话凭证" align="center" width="180" prop="tokenValue" show-overflow-tooltip />
-          <el-table-column label="账号" align="center" prop="username" show-overflow-tooltip />
-          <el-table-column label="登录IP" align="center" prop="ip" width="180" />
-          <el-table-column label="登录地点" align="center" prop="ipLocation" width="180" />
-          <el-table-column label="浏览器" align="center" prop="browser" width="180" />
-          <el-table-column label="操作系统" align="center" prop="os" width="180" />
+          <el-table-column label="用户id" align="center" width="100" prop="id"/>
+          <el-table-column label="会话凭证" align="center" width="100" prop="tokenValue" show-overflow-tooltip />
+          <el-table-column label="登录IP" align="center" prop="ip" width="100" />
+          <el-table-column label="登录地点" align="center" prop="ipLocation" width="150" />
+          <el-table-column label="用户名" align="center" prop="username" width="100" show-overflow-tooltip />
+          <el-table-column label="邮箱" align="center" prop="email" width="180" show-overflow-tooltip />
           <el-table-column label="登录时间" align="center" prop="lastLoginTime" width="180" />
+          <el-table-column label="操作系统" align="center" prop="os" width="100" />
+          <el-table-column label="浏览器" align="center" prop="browser" width="100" />
           <el-table-column label="操作" align="center" width="280" fixed="right">
             <template #default="scope">
               <el-button
@@ -76,6 +94,8 @@
   const queryParams = reactive({
     pageNum: 1,
     pageSize: 10,
+    userId: null,
+    email: null,
     username: null
   })
   
@@ -83,8 +103,7 @@
   const total = ref(0)
   const tableData = ref([])
   const queryFormRef = ref<FormInstance>()
-  
-  
+
   // 获取标签列表
   const getList = async () => {
     loading.value = true
