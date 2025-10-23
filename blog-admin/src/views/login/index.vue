@@ -14,7 +14,7 @@
         <!-- Logo和标题区域 -->
         <div class="brand-content">
           <div class="logo-wrapper">
-            <Logo :size="80" class="floating-logo" :color="logoColor" />
+            <Logo :size="80" class="floating-logo" :color="logoColor"/>
           </div>
           <h1 class="brand-title">{{ settings.title }}</h1>
           <p class="brand-description">
@@ -31,7 +31,7 @@
         <div class="theme-switch">
           <el-button class="theme-button" circle @click="toggleTheme">
             <el-icon>
-              <component :is="isDark ? 'Sunny' : 'Moon'" />
+              <component :is="isDark ? 'Sunny' : 'Moon'"/>
             </el-icon>
           </el-button>
         </div>
@@ -43,33 +43,27 @@
         <div class="login-tabs">
           <div class="tab-item" :class="{ active: loginType === 'account' }" @click="loginType = 'account'">
             <el-icon>
-              <User />
+              <User/>
             </el-icon>
             账号登录
           </div>
-<!--          <div class="tab-item" :class="{ active: loginType === 'qrcode' }" @click="loginType = 'qrcode'">-->
-<!--            <el-icon>-->
-<!--              <component :is="QrCode" />-->
-<!--            </el-icon>-->
-<!--            扫码登录-->
-<!--          </div>-->
         </div>
 
         <!-- 登录表单内容 -->
         <transition name="fade-transform" mode="out-in">
           <el-form v-if="loginType === 'account'" ref="loginFormRef" :model="loginForm" :rules="rules"
-            @keyup.enter="handleLogin">
+                   @keyup.enter="handleLogin">
             <el-form-item prop="username">
-              <el-input v-model="loginForm.username" placeholder="请输入用户名/邮箱" prefix-icon="User" />
+              <el-input v-model="loginForm.username" placeholder="请输入用户名/邮箱" prefix-icon="User"/>
             </el-form-item>
             <el-form-item prop="password">
               <el-input v-model="loginForm.password" type="password" placeholder="请输入密码" prefix-icon="Lock"
-                show-password />
+                        show-password/>
             </el-form-item>
 
             <div class="login-options">
               <el-checkbox v-model="rememberMe">记住我</el-checkbox>
-              <a href="#" class="forget-password" @click="registerAdmin">立即注册</a>
+              <a href="#" class="side-link" @click="forgetPassword">忘记密码?</a>
             </div>
 
             <el-button :loading="loading" type="primary" class="login-button" @click="handleLogin">
@@ -77,55 +71,51 @@
             </el-button>
           </el-form>
 
-          <div v-else class="qrcode-box">
-            <div class="qrcode-wrapper">
-              <div class="qrcode-scanner"></div>
-              <img :src="qrCodeUrl" alt="二维码" class="qrcode-img" />
-              <transition name="fade">
-                <div class="qrcode-mask" v-if="qrCodeExpired">
-                  <el-icon class="expired-icon">
-                    <Warning />
-                  </el-icon>
-                  <p>二维码已过期</p>
-                  <el-button type="primary" @click="refreshQrCode" round>
-                    <el-icon>
-                      <RefreshRight />
-                    </el-icon>
-                    刷新二维码
+          <el-form v-else :model="forgetPasswordForm" :rules="forgotFormRules">
+            <el-form-item prop="email">
+              <el-input prefix-icon="Message" v-model="forgetPasswordForm.email" placeholder="请输入注册邮箱"/>
+            </el-form-item>
+
+            <el-form-item prop="code">
+              <el-input prefix-icon="Key" v-model="forgetPasswordForm.code" placeholder="请输入验证码">
+                <template slot="append">
+                  <el-button @click="sendVerificationCode" :disabled="codeParam.codeSending">
+                    {{ codeParam.codeButtonText }}
                   </el-button>
-                </div>
-              </transition>
-            </div>
-            <p class="qrcode-tip">
-              <el-icon>
-                <Iphone />
-              </el-icon>
-              请使用手机扫码登录
-            </p>
-          </div>
+                </template>
+              </el-input>
+            </el-form-item>
+
+            <el-form-item prop="password">
+              <el-input v-model="forgetPasswordForm.password" type="password" placeholder="请输入密码" prefix-icon="Lock"
+                        show-password/>
+            </el-form-item>
+
+            <el-button :loading="loading" type="primary" class="login-button" @click="handleLogin">
+              重置密码
+            </el-button>
+          </el-form>
+
         </transition>
 
         <!-- 社交登录 -->
-<!--        <div class="social-login">-->
-<!--          <div class="divider">其他登录方式</div>-->
-<!--          <div class="social-icons">-->
-<!--            <div class="social-icon" @click="handleSocialLogin('wechat')">-->
-<!--              <svg-icon name="wechat" />-->
-<!--            </div>-->
-<!--            <div class="social-icon" @click="handleSocialLogin('qq')">-->
-<!--              <svg-icon name="qq" />-->
-<!--            </div>-->
-<!--            <div class="social-icon" @click="handleSocialLogin('gitee')">-->
-<!--              <svg-icon name="gitee" />-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
+        <div class="social-login">
+          <div class="divider">管理系统暂不开放注册通道, 您还可以:</div>
+          <div class="social-icons">
+            <div class="login-options">
+              <a href="#" class="side-link" @click="registerRequest">申请注册</a>
+            </div>
+            <div class="login-options">
+              <a href="#" class="side-link" @click="forwardBlog">前往博客</a>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 滑块验证 -->
       <el-dialog title="请拖动滑块完成拼图" width="360px" v-model="showSliderVerify" :close-on-click-modal="false"
-        @closed="refresh" append-to-body>
-        <slider-verify ref="sliderVerifyRef" @success="onSuccess" @fail="onFail" @again="onAgain" />
+                 @closed="refresh" append-to-body>
+        <slider-verify ref="sliderVerifyRef" @success="onSuccess" @fail="onFail" @again="onAgain"/>
       </el-dialog>
 
       <!-- 页脚版权信息 -->
@@ -133,37 +123,39 @@
         <p>Copyright © 2025 Dejavu-Blog-Admin</p>
         <a href="https://beian.miit.gov.cn/" target="_blank">赣ICP备2025073628号</a>
       </footer>
+
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import router from "@/router";
-import type { FormInstance } from "element-plus";
-import { ElMessage } from "element-plus";
-import { useUserStore } from "@/store/modules/user";
-import { useSettingsStore } from "@/store/modules/settings";
+import type {FormInstance} from "element-plus";
+import {ElMessage} from "element-plus";
+import {useUserStore} from "@/store/modules/user";
+import {useSettingsStore} from "@/store/modules/settings";
 import Logo from "@/layouts/components/Sidebar/Logo.vue";
 import settings from "@/config/settings";
 import SliderVerify from "./components/SliderVerify.vue";
-import { getCaptchaSwitchApi } from "@/api/system/auth";
+import {getCaptchaSwitchApi} from "@/api/system/auth";
 
 const QrCode = markRaw({
   name: "QrCode",
   render() {
     return h(
-      "svg",
-      {
-        viewBox: "0 0 1024 1024",
-        width: "1em",
-        height: "1em",
-        fill: "currentColor",
-      },
-      [
-        h("path", {
-          d: "M468 128H160c-17.7 0-32 14.3-32 32v308c0 4.4 3.6 8 8 8h332c4.4 0 8-3.6 8-8V136c0-4.4-3.6-8-8-8zm-56 284H192V192h220v220zm-138-74h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm444-140H556c-4.4 0-8 3.6-8 8v332c0 4.4 3.6 8 8 8h276c4.4 0 8-3.6 8-8V160c0-17.7-14.3-32-32-32zm-56 284H556V192h220v220zm-138-74h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zM192 556v308c0 17.7 14.3 32 32 32h308c4.4 0 8-3.6 8-8V556c0-4.4-3.6-8-8-8H160c-4.4 0-8 3.6-8 8zm56 284V556h220v284H192zm-64-220h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm500 220c0 4.4 3.6 8 8 8h108v108c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V556c0-4.4-3.6-8-8-8H556c-4.4 0-8 3.6-8 8v332zm64-216h108v108H748V624z",
-        }),
-      ]
+        "svg",
+        {
+          viewBox: "0 0 1024 1024",
+          width: "1em",
+          height: "1em",
+          fill: "currentColor",
+        },
+        [
+          h("path", {
+            d: "M468 128H160c-17.7 0-32 14.3-32 32v308c0 4.4 3.6 8 8 8h332c4.4 0 8-3.6 8-8V136c0-4.4-3.6-8-8-8zm-56 284H192V192h220v220zm-138-74h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm444-140H556c-4.4 0-8 3.6-8 8v332c0 4.4 3.6 8 8 8h276c4.4 0 8-3.6 8-8V160c0-17.7-14.3-32-32-32zm-56 284H556V192h220v220zm-138-74h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zM192 556v308c0 17.7 14.3 32 32 32h308c4.4 0 8-3.6 8-8V556c0-4.4-3.6-8-8-8H160c-4.4 0-8 3.6-8 8zm56 284V556h220v284H192zm-64-220h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm500 220c0 4.4 3.6 8 8 8h108v108c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V556c0-4.4-3.6-8-8-8H556c-4.4 0-8 3.6-8 8v332zm64-216h108v108H748V624z",
+          }),
+        ]
     );
   },
 });
@@ -173,7 +165,6 @@ const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
 const rememberMe = ref(false);
 const loginType = ref("account");
-const qrCodeUrl = ref("https://minio.dejavu.zone/dejavu-blog/common/qrcode.jpg");
 const qrCodeExpired = ref(false);
 
 const showSliderVerify = ref(false);
@@ -187,16 +178,37 @@ const loginForm = reactive({
   nonceStr: "",
   value: "",
 });
+const codeParam = reactive({
+  codeSending: false,
+  codeButtonText: "发送验证码"
+});
+const forgetPasswordForm = reactive({
+  email: "",
+  code: "",
+  password: ""
+});
 
 const rules = {
   username: [
-    { required: true, message: "请输入用户名", trigger: "blur" },
-    { min: 3, max: 20, message: "长度在 3 到 20 个字符", trigger: "blur" },
+    {required: true, message: "请输入用户名", trigger: "blur"},
+    {min: 3, max: 20, message: "长度在 3 到 20 个字符", trigger: "blur"},
   ],
   password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 6, max: 20, message: "长度在 6 到 20 个字符", trigger: "blur" },
+    {required: true, message: "请输入密码", trigger: "blur"},
+    {min: 6, max: 20, message: "长度在 6 到 20 个字符", trigger: "blur"},
   ],
+};
+
+const forgotFormRules = {
+  email: [
+    {required: true, message: "请输入用户名", trigger: "blur"}
+  ],
+  code: [
+    {required: true, message: "请输入密码", trigger: "blur"}
+  ],
+  password: [
+    {required: true, message: "请输入密码", trigger: "blur"}
+  ]
 };
 
 const isDark = computed(() => settingsStore.theme === "dark");
@@ -215,20 +227,22 @@ const onSuccess = (captcha: any) => {
 const login = () => {
   loading.value = true;
   userStore
-    .login(loginForm)
-    .then(() => {
-      sliderVerifyRef?.value?.verifySuccessEvent();
-      router.push("/");
-      ElMessage.success("登录成功");
-    })
-    .catch(() => {
-      refresh();
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+      .login(loginForm)
+      .then(() => {
+        sliderVerifyRef?.value?.verifySuccessEvent();
+        router.push("/");
+        ElMessage.success("登录成功");
+      })
+      .catch(() => {
+        refresh();
+      })
+      .finally(() => {
+        loading.value = false;
+      });
 };
-
+const sendVerificationCode = () => {
+  console.log("发送验证码")
+};
 
 /* 滑动验证失败*/
 const onFail = (msg: string) => {
@@ -241,7 +255,7 @@ const onAgain = () => {
 
 const toggleTheme = () => {
   const newTheme = isDark.value ? "light" : "dark";
-  settingsStore.saveSettings({ theme: newTheme });
+  settingsStore.saveSettings({theme: newTheme});
 };
 
 const handleLogin = async () => {
@@ -256,30 +270,23 @@ const handleLogin = async () => {
   });
 };
 
-const registerAdmin = () => {
-  ElMessage.info("管理系统注册功能暂不开放");
+const handleResetPassword = async () => {
+
 };
 
-const refreshQrCode = async () => {
-  qrCodeExpired.value = false;
-  // TODO: 调用后端接口获取新的二维码
+
+const forgetPassword = () => {
+  // 切换到forgetPassword表单
+  ElMessage.error("请联系作者重置密码");
 };
 
-let qrCodeTimer: number;
-watch(loginType, (newVal) => {
-  if (newVal === "qrcode") {
-    refreshQrCode();
-    qrCodeTimer = window.setInterval(() => {
-      // TODO: 检查二维码状态
-    }, 3000);
-  } else {
-    clearInterval(qrCodeTimer);
-  }
-});
+const registerRequest = () => {
+  ElMessage.error("请通过博客首页获取作者邮箱发送注册申请,并附带申请理由");
+};
 
-onUnmounted(() => {
-  clearInterval(qrCodeTimer);
-});
+const forwardBlog = () => {
+  window.location.href = "https://dejavu.zone"
+};
 
 // 添加 logo 颜色计算
 const logoColor = computed(() => {
@@ -318,11 +325,11 @@ const logoColor = computed(() => {
           transparent 2px,
           rgba(33, 150, 243, 0.1) 3px,
           rgba(33, 150, 243, 0.1) 3px),
-        repeating-linear-gradient(90deg,
-          transparent,
-          transparent 2px,
-          rgba(33, 150, 243, 0.1) 3px,
-          rgba(33, 150, 243, 0.1) 3px);
+      repeating-linear-gradient(90deg,
+              transparent,
+              transparent 2px,
+              rgba(33, 150, 243, 0.1) 3px,
+              rgba(33, 150, 243, 0.1) 3px);
       background-size: 30px 30px;
       transform: perspective(500px) rotateX(60deg);
       animation: matrixMove 20s linear infinite;
@@ -335,9 +342,9 @@ const logoColor = computed(() => {
       background: radial-gradient(circle at 30% 30%,
           rgba(33, 150, 243, 0.3) 0%,
           transparent 50%),
-        radial-gradient(circle at 70% 70%,
-          rgba(3, 169, 244, 0.3) 0%,
-          transparent 50%);
+      radial-gradient(circle at 70% 70%,
+              rgba(3, 169, 244, 0.3) 0%,
+              transparent 50%);
       filter: blur(30px);
       animation: glowPulse 8s ease-in-out infinite alternate;
     }
@@ -684,7 +691,7 @@ const logoColor = computed(() => {
     color: var(--el-text-color-regular);
   }
 
-  .forget-password {
+  .side-link {
     color: var(--el-text-color-regular);
     text-decoration: none;
     font-size: 14px;

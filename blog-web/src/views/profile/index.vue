@@ -596,14 +596,13 @@ export default {
       showCropper: false,
       // 所有需要展示的绑定账号类型
       allAccountTypes: [
-        'email', 'qq', 'gitee', 'weibo', 'github', 'wechat'
+        'email', 'qq', 'gitee', 'github', 'wechat'
       ],
       // 映射类型信息，包括 icon 和 color 和 name
       typeMappings: {
         email: { icon: 'fas fa-envelope', color: '#007BFF', name: '邮箱' },
         qq: { icon: 'fab fa-qq', color: '#60a5fa', name: 'QQ' },
         gitee: { icon: 'fab fa-git-alt', color: '#FF0000', name: '码云' },
-        weibo: { icon: 'fab fa-weibo', color: '#E6162D', name: '微博' },
         github: { icon: 'fab fa-github', color: '#000000', name: 'Github' },
         wechat: { icon: 'fab fa-weixin', color: '#10b981', name: '微信公众号' }
       },

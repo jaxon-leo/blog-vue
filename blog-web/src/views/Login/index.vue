@@ -57,7 +57,7 @@
 
           <el-form :model="loginForm" :rules="rules" ref="ruleFrom">
             <el-form-item class="form-item" prop="username">
-              <el-input prefix-icon="el-icon-user-solid" v-model="loginForm.username" placeholder="请输入用户名"
+              <el-input prefix-icon="el-icon-user-solid" v-model="loginForm.username" placeholder="请输入邮箱"
                 @keyup.enter.native="handleLogin" size="large" />
             </el-form-item>
 
@@ -228,10 +228,14 @@ export default {
           title: "码云账号登录",
           icon: "fab fa-git-alt",
         },
-        weibo: {
-          title: "微博账号登录",
-          icon: "fab fa-weibo",
-        },
+        // weibo: {
+        //   title: "微博账号登录",
+        //   icon: "fab fa-weibo",
+        // },
+        // google: {
+        //   title: "谷歌账号登录",
+        //   icon: "fab fa-google",
+        // },
         github: {
           title: "GitHub账号登录",
           icon: "fab fa-github",
@@ -254,7 +258,7 @@ export default {
           },
         ],
         username: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
+          { required: true, message: "请输入邮箱", trigger: "blur" },
           {
             min: 3,
             max: 50,
@@ -689,6 +693,12 @@ export default {
 
   &.weibo {
     color: #e6162d;
+  }
+
+  &.google {
+    background: linear-gradient(45deg, #4285F4, #EA4335, #FBBC05, #34A853);
+    -webkit-background-clip: text;  /* 让渐变应用到文字或图标 */
+    color: transparent;  /* 图标文字颜色透明，显示背景渐变 */
   }
 }
 
