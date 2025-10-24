@@ -350,10 +350,10 @@ const userForm = reactive({
 
 // 表单校验规则
 const rules = reactive<FormRules>({
-  username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
-  ],
+  // username: [
+  //   { required: true, message: '请输入用户名', trigger: 'blur' },
+  //   { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+  // ],
   nickname: [
     { required: true, message: '请输入昵称', trigger: 'blur' }
   ],

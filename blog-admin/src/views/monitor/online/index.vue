@@ -42,11 +42,11 @@
           :data="tableData"
           style="width: 100%"
         >
-          <el-table-column type="selection"  width="55" align="center" />
+          <el-table-column type="selection"  width="30" align="center" />
           <el-table-column label="用户id" align="center" width="100" prop="id"/>
           <el-table-column label="会话凭证" align="center" width="100" prop="tokenValue" show-overflow-tooltip />
-          <el-table-column label="登录IP" align="center" prop="ip" width="100" />
-          <el-table-column label="登录地点" align="center" prop="ipLocation" width="150" />
+          <el-table-column label="登录IP" align="center" prop="ip" width="130" />
+          <el-table-column label="登录地点" align="center" prop="ipLocation" width="160" show-overflow-tooltip/>
           <el-table-column label="用户名" align="center" prop="username" width="100" show-overflow-tooltip />
           <el-table-column label="邮箱" align="center" prop="email" width="180" show-overflow-tooltip />
           <el-table-column label="登录时间" align="center" prop="lastLoginTime" width="180" />
