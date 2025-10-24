@@ -695,7 +695,7 @@ export default {
           this.getMyFeedbacks();
           break;
         default:
-          break; dwada
+          break;
       }
     },
     /**

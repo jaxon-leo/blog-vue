@@ -68,10 +68,20 @@ export default {
      * 处理第三方登录用回调逻辑
      */
     async handleThirdPartyLogin() {
-      let flag = window.location.href.indexOf("token") != -1;
-      if (flag) {
-        let token = window.location.href.split("token=")[1];
-        this.$store.commit('SET_TOKEN', token);
+      // 获取当前页面的 URL
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams) {
+        // 获取 'token' 参数的值
+        const token = urlParams.get('token');
+        if (token) {
+          this.$store.commit('SET_TOKEN', token);
+        }
+        //获取异常信息
+        const error = urlParams.get('error')
+        if (error) {
+          //页面提示。 为保证中文的正常显示，需要进行解码
+          this.$message.error(decodeURIComponent(error));
+        }
       }
     },
 
