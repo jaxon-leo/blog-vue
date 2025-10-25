@@ -204,8 +204,6 @@ export default {
           } catch (error) {
             this.$message.error(error.message)
           }
-        } else {
-          console.log('error submit!!')
         }
       })
 
