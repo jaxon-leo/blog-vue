@@ -1157,7 +1157,7 @@ export default {
     border-radius: 6px;
     padding-top: 2.5em;
     overflow: hidden;
-    max-height: 2000px;
+    //max-height: 2000px;  //不限制展开之后的长度
     transition: max-height 0.4s ease-in-out;
 
     &.collapsed {
