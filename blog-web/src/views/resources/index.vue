@@ -34,12 +34,12 @@
             </div>
             <div class="resource-info">
               <div class="resource-name text-ellipsis" :title="resource.name">{{ resource.name }}</div>
-              <div class="resource-meta">
-                <el-tag size="mini" :type="!resource.isFree ? 'success' : 'warning'" effect="plain">
-                  {{ !resource.isFree ? '免费' : '付费' }}
-                </el-tag>
+<!--              <div class="resource-meta">-->
+<!--                <el-tag size="mini" :type="getTagType(resource.isFree)" effect="plain">-->
+<!--                  {{ getTagText(resource.isFree) }}-->
+<!--                </el-tag>-->
 
-              </div>
+<!--              </div>-->
             </div>
           </div>
           <div class="resource-footer">
@@ -81,9 +81,9 @@
             <svg-icon :icon-class="currentResource.categoryIcon"></svg-icon>
           </div>
           <h3 class="resource-title">{{ currentResource.name }}</h3>
-          <el-tag size="small" :type="!currentResource.isFree ? 'success' : 'warning'" effect="plain">
-            {{ !currentResource.isFree ? '免费' : '付费' }}
-          </el-tag>
+<!--          <el-tag size="small" :type="getTagType(currentResource.isFree)" effect="plain">-->
+<!--            {{ getTagText(currentResource.isFree) }}-->
+<!--          </el-tag>-->
         </div>
 
         <el-descriptions border>
@@ -107,7 +107,7 @@
         </div>
 
         <!-- 验证码部分 -->
-        <div class="verify-section" v-if="showVerifyCode && !currentResource.panPath">
+        <div class="verify-section" v-if="showVerifyCode && !currentResource.link">
           <div class="qr-code">
             <img v-lazy="'https://minio.dejavu.zone/dejavu-blog/common/qrcode.jpg'"
               :key="'https://minio.dejavu.zone/dejavu-blog/common/qrcode.jpg'" alt="扫码获取验证码">
@@ -127,11 +127,11 @@
         </div>
 
         <!-- 下载链接部分 -->
-        <div class="download-link-section" v-if="currentResource.panPath">
+        <div class="download-link-section" v-if="currentResource.link">
           <div class="link-item">
             <span class="label">下载地址/网盘链接:</span>
-            <el-input v-model="currentResource.panPath" readonly>
-              <el-button slot="append" @click="copyText(currentResource.panPath)">
+            <el-input v-model="currentResource.link" readonly>
+              <el-button slot="append" @click="copyText(currentResource.link)">
                 复制
               </el-button>
             </el-input>
@@ -202,7 +202,29 @@ export default {
   },
   methods: {
 
+    //资源标签类型
+    getTagType(isFree){
+      if (!isFree || isFree === 0) {
+        return 'success';  //本地
+      } else if (isFree === 1) {
+        return 'primary'; // 下载链接
+      } else if (isFree === 2) {
+        return 'warning'; // 网盘地址
+      }
+      return '';
+    },
 
+    //资源标签
+    getTagText(isFree){
+      if (!isFree || isFree === 0) {
+        return '本地'; // 本地
+      } else if (isFree === 1) {
+        return '下载链接'; // 下载链接
+      } else if (isFree === 2) {
+        return '网盘地址'; // 网盘地址
+      }
+      return '';
+    },
     /**
      * 获取资源
      */
@@ -296,7 +318,7 @@ export default {
       this.verifying = true
       this.verifyForm.id = this.currentResource.id
       verifyCodeApi(this.verifyForm).then(res => {
-        this.currentResource.panPath = res.data.panPath
+        this.currentResource.link = res.data.link
         this.currentResource.panCode = res.data.panCode
         this.verifying = false
         //验证成功后清掉二维码
