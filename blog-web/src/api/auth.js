@@ -83,12 +83,13 @@ export function getWechatLoginCodeApi() {
 }
 
 /**
- * 获取微信登录状态
+ * 获取微信登录状态（轮询用，不弹全局错误避免刷屏）
  */
 export function getWechatIsLoginApi(code) {
   return request({
     url: `/api/wechat/isLogin/${code}`,
     method: 'get',
+    skipGlobalError: true,
   })
 }
 

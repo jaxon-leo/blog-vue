@@ -23,30 +23,34 @@ service.interceptors.request.use(
   }
 )
 
-// 响应拦截器
+// 响应拦截器（config.skipGlobalError === true 时不弹全局错误提示，由调用方自行处理）
 service.interceptors.response.use(
   response => {
     const res = response.data
+    const skipGlobalError = response.config.skipGlobalError === true
     if (res.code === 200) {
       return res
     }
     if (res.code === 404) {
-      Message.error('请求路径不存在')
+      if (!skipGlobalError) Message.error('请求路径不存在')
       return Promise.reject(new Error('请求路径不存在'))
     }
     if (res.code === 401) {
-      Message.warning(res.message || '当前登录已过期，请重新登录')
+      if (!skipGlobalError) Message.warning(res.message || '当前登录已过期，请重新登录')
       removeToken()
       store.commit('SET_USER_INFO', null)
       router.push('/login')
       return Promise.reject(new Error(res.message || '当前登录已过期，请重新登录'))
     }
-    Message.error(res.message || '请求失败')
+    if (!skipGlobalError) Message.error(res.message || '请求失败')
     return Promise.reject(new Error(res.message || '请求失败'))
   },
   error => {
-    const msg = error.response?.data?.message || error.message || '网络异常，请稍后重试'
-    Message.error(msg)
+    const skipGlobalError = error.config?.skipGlobalError === true
+    if (!skipGlobalError) {
+      const msg = error.response?.data?.message || error.message || '网络异常，请稍后重试'
+      Message.error(msg)
+    }
     if (error.response?.status === 401) {
       removeToken()
       store.commit('SET_USER_INFO', null)

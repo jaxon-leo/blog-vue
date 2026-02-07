@@ -31,7 +31,7 @@ export function getAlbumPhotosApi(id) {
 }
 
 /**
- * 验证相册密码
+ * 验证相册密码（不弹全局错误，由页面只提示一次）
  */
 export function verifyAlbumPasswordApi(id, password) {
   return request({
@@ -39,6 +39,7 @@ export function verifyAlbumPasswordApi(id, password) {
     method: 'get',
     params: {
       password: password
-    }
+    },
+    skipGlobalError: true,
   })
 }
