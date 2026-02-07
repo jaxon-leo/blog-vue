@@ -71,7 +71,7 @@
 <script>
 import { getRecommendArticlesApi } from '@/api/article'
 import Tag from './components/tagCloud.vue'
-import { sanitizeRichHtml } from '@/utils/sanitize'
+import { sanitizeRichHtml as doSanitizeRichHtml } from '@/utils/sanitize'
 
 export default {
   name: 'Sidebar',
@@ -168,6 +168,10 @@ export default {
     handleImageError(e) {
       e.target.src = this.$store.state.defaultImage
       e.target.classList.add('fallback')
+    },
+    /** 供模板使用的 XSS 过滤，保证 sanitizeRichHtml 在实例上可用 */
+    sanitizeRichHtml(html) {
+      return doSanitizeRichHtml(html || '')
     },
     /**
      * 复制到剪贴板

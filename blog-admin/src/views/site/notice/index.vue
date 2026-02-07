@@ -83,9 +83,9 @@
             <el-dialog v-model="open" :title="title" width="500px" append-to-body>
                 <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
                     <el-form-item label="公告内容" prop="content">
-                        <div style="border: 1px solid #ccc">
+                        <div class="wangeditor-wrap" style="border: 1px solid #ccc; min-height: 320px;">
                             <Toolbar style="border-bottom: 1px solid #ccc" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
-                            <Editor style="height: 300px; overflow-y: hidden;" v-model="form.content" :defaultConfig="editorConfig" :mode="mode"
+                            <Editor style="min-height: 300px; height: 300px; overflow-y: hidden;" v-model="form.content" :defaultConfig="editorConfig" :mode="mode"
                             @onCreated="handleCreated"/>
                         </div>
 

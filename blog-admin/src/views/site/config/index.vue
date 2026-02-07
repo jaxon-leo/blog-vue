@@ -76,7 +76,7 @@
                 <el-form-item label="关于我" prop="aboutMe">
                   <div style="border: 1px solid #ccc;">
                       <Toolbar style="border-bottom: 1px solid #ccc;width: 1200px;" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
-                      <Editor style=" overflow-y: hidden;width: 1200px" v-model="form.aboutMe" :defaultConfig="editorConfig" :mode="mode"
+                      <Editor style="min-height: 300px; height: 300px; overflow-y: hidden; width: 100%; max-width: 1200px;" v-model="form.aboutMe" :defaultConfig="editorConfig" :mode="mode"
                       @onCreated="handleCreated"/>
                   </div>
                 </el-form-item>
