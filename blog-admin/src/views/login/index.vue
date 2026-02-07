@@ -230,8 +230,12 @@ const login = () => {
       .login(loginForm)
       .then(() => {
         sliderVerifyRef?.value?.verifySuccessEvent();
-        router.push("/");
         ElMessage.success("登录成功");
+        // 使用 replace 避免登录页入栈，确保跳转生效
+        router.replace("/").catch(() => {
+          // 若目标路由未就绪，重试一次
+          setTimeout(() => router.replace("/"), 100);
+        });
       })
       .catch(() => {
         refresh();

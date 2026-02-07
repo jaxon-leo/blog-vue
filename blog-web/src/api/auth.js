@@ -1,15 +1,14 @@
 import request from '@/utils/request'
 
 /**
- * 登录
- * @param {*} data 
- * @returns 
+ * 登录（不弹全局错误，由页面统一提示一次）
  */
 export function loginApi(data) {
   return request({
     url: '/auth/login',
     method: 'post',
-    data
+    data,
+    skipGlobalError: true,
   })
 }
 

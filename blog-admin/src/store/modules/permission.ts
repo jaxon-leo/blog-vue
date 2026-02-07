@@ -9,24 +9,32 @@ import ParentView from '@/components/ParentView/index.vue'
 
 const Layout = () => import("@/layouts/index.vue");
 
+/** 将 path 转为合法路由 name 片段（无前导/、/ 换 _） */
+function pathToNameSegment(path: string): string {
+  return (path || '').replace(/^\//, '').replace(/\//g, '_').replace(/_+/g, '_') || 'route';
+}
+
 /**
- * 递归过滤有权限的异步(动态)路由
+ * 递归过滤有权限的异步(动态)路由，子路由 name 带父级前缀，保证全局唯一
  *
  * @param routes 接口返回的异步(动态)路由
- * @param roles 用户角色集合
- * @returns 返回用户有权限的异步(动态)路由
+ * @param isRoot 是否根级
+ * @param parentNamePrefix 父级 name 前缀，用于生成唯一子 name
  */
-const filterAsyncRoutes = (routes: RouteRecordRaw[], isRoot = true) => {
+const filterAsyncRoutes = (routes: RouteRecordRaw[], isRoot = true, parentNamePrefix = ''): any[] => {
   const asyncRoutes: any[] = [];
 
   routes.forEach((route) => {
+    const tmpRoute = { ...route };
+    const segment = pathToNameSegment((route.path as string) || '');
 
-    const tmpRoute = { ...route }; // ES6扩展运算符复制新对象
-
-    // 无 name 时用 path 生成唯一 name，避免路由重复
-    if (!route.name && route.path) {
-      tmpRoute.name = (route.path as string).replace(/^\//, '').replace(/\//g, '_') || undefined;
+    // 子路由一律带父级前缀，保证与祖先、兄弟不重名
+    if (parentNamePrefix) {
+      tmpRoute.name = `${parentNamePrefix}_${tmpRoute.name || segment}`.replace(/_+/g, '_');
+    } else if (!tmpRoute.name && segment) {
+      tmpRoute.name = segment;
     }
+    const currentNamePrefix = (tmpRoute.name as string) || segment || parentNamePrefix;
 
     if (tmpRoute.component) {
       if (tmpRoute.component?.toString() === "Layout") {
@@ -34,7 +42,6 @@ const filterAsyncRoutes = (routes: RouteRecordRaw[], isRoot = true) => {
       } else if (tmpRoute.component === 'ParentView') {
         tmpRoute.component = ParentView;
       } else {
-        // 统一 component 路径格式：保证带前导 /，便于拼接
         const compPath = typeof tmpRoute.component === 'string'
           ? (tmpRoute.component.startsWith('/') ? tmpRoute.component : `/${tmpRoute.component}`)
           : '';
@@ -44,13 +51,11 @@ const filterAsyncRoutes = (routes: RouteRecordRaw[], isRoot = true) => {
         }
       }
 
-      if (tmpRoute.children) {
-        // 递归处理子路由时，传入 false 表示不是根级路由
-        tmpRoute.children = filterAsyncRoutes(tmpRoute.children, false);
+      if (tmpRoute.children && tmpRoute.children.length > 0) {
+        tmpRoute.children = filterAsyncRoutes(tmpRoute.children, false, currentNamePrefix);
       }
     }
     asyncRoutes.push(tmpRoute);
-
   });
 
   // 只在处理根级路由时添加404路由
