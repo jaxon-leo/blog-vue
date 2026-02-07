@@ -1,13 +1,28 @@
 <template>
-  <el-container class="layout-container">
-    <el-aside :width="isCollapse ? '64px' : '220px'" class="transition-width">
+  <el-container class="layout-container" :class="{ 'is-mobile': isMobile }">
+    <!-- PC 端：侧边栏常驻 -->
+    <el-aside v-if="!isMobile" :width="isCollapse ? '64px' : '220px'" class="transition-width">
       <Sidebar :is-collapse="isCollapse" />
     </el-aside>
+    <!-- 移动端：侧边栏放入抽屉，避免挤压主内容 -->
+    <el-drawer
+      v-if="isMobile"
+      v-model="mobileSidebarVisible"
+      direction="ltr"
+      size="280px"
+      :with-header="false"
+      custom-class="mobile-sidebar-drawer"
+    >
+      <Sidebar :is-collapse="false" />
+    </el-drawer>
     <el-container>
       <el-header class="header">
-        <Navbar 
+        <Navbar
           :is-collapse="isCollapse"
+          :is-mobile="isMobile"
+          :mobile-sidebar-visible="mobileSidebarVisible"
           @toggle-collapse="toggleCollapse"
+          @toggle-mobile-sidebar="mobileSidebarVisible = !mobileSidebarVisible"
           @lock="handleLock"
           @theme-click="drawerVisible = true"
         />
@@ -68,14 +83,24 @@ import LockScreen from '@/components/LockScreen/index.vue'
 import Watermark from '@/components/Watermark/index.vue'
 import Footer from '@/components/Footer/index.vue'
 
+import { useRoute } from 'vue-router'
 import { useSettingsStore, usePermissionStore } from "@/store";
 import { useTagsViewStore } from '@/store/modules/tagsView'
 
+const route = useRoute()
 const settingsStore = useSettingsStore()
 const tagsViewStore = useTagsViewStore()
 const isCollapse = ref<boolean>(false)
 const drawerVisible = ref(false)
 const lockScreenRef = ref()
+const MOBILE_BREAKPOINT = 992
+const isMobile = ref(false)
+const mobileSidebarVisible = ref(false)
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= MOBILE_BREAKPOINT
+  if (isMobile.value) mobileSidebarVisible.value = false
+}
 
 const toggleCollapse = () => {
   isCollapse.value = !isCollapse.value
@@ -93,9 +118,18 @@ const handleLock = () => {
   lockScreenRef.value?.lock()
 }
 
-// 初始化固定标签
+watch(() => route.path, () => {
+  if (isMobile.value) mobileSidebarVisible.value = false
+})
+
 onMounted(() => {
   tagsViewStore.initTags()
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', checkMobile)
 })
 
 </script>
@@ -133,6 +167,10 @@ onMounted(() => {
   padding: 16px;
   overflow-y: auto;
   background-color: var(--el-bg-color);
+}
+
+.layout-container.is-mobile .main-container {
+  width: 100%;
 }
 
 .theme-icon-container {

@@ -1,7 +1,12 @@
 <template>
   <div class="navbar-container">
     <div class="navbar-left">
-      <el-icon class="collapse-btn" @click="toggleCollapse">
+      <!-- 移动端：汉堡按钮打开侧边栏抽屉 -->
+      <el-icon v-if="isMobile" class="collapse-btn" @click="emit('toggle-mobile-sidebar')">
+        <Menu />
+      </el-icon>
+      <!-- PC 端：折叠按钮 -->
+      <el-icon v-else class="collapse-btn" @click="toggleCollapse">
         <Fold v-if="!isCollapse" />
         <Expand v-else />
       </el-icon>
@@ -42,7 +47,7 @@ import Breadcrumb from './Breadcrumb/index.vue'
 import UserTool from './UserTool/index.vue'
 import LockScreen from '@/components/LockScreen/index.vue'
 import Notification from './Notification/index.vue'
-import { FullScreen, Setting } from '@element-plus/icons-vue'
+import { FullScreen, Setting, Menu } from '@element-plus/icons-vue'
 
 const settingsStore = useSettingsStore()
 const lockScreenRef = ref()
@@ -52,10 +57,18 @@ defineProps({
   isCollapse: {
     type: Boolean,
     required: true
+  },
+  isMobile: {
+    type: Boolean,
+    default: false
+  },
+  mobileSidebarVisible: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['toggle-collapse'])
+const emit = defineEmits(['toggle-collapse', 'toggle-mobile-sidebar'])
 
 const toggleCollapse = () => {
   emit('toggle-collapse')

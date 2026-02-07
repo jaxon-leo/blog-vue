@@ -1,9 +1,10 @@
 <template>
-  <el-drawer 
-    :visible.sync="visible" 
-    direction="ltr" 
+  <el-drawer
+    :visible.sync="visible"
+    direction="ltr"
     :with-header="false"
-    size="50%"
+    size="85%"
+    custom-class="mobile-menu-drawer"
   >
     <div class="mobile-menu">
       <div class="menu-header">
@@ -11,19 +12,48 @@
         <h2 class="site-name">{{ $store.state.webSiteInfo.name }}</h2>
       </div>
       <div class="menu-content">
-        <TransitionGroup name="menu-item">
-          <router-link 
-            v-for="route in routes" 
-            :key="route.path"
-            :to="route.path"
+        <template v-for="item in menuItems">
+          <!-- 有子菜单：全宽展开显示所有子项 -->
+          <div v-if="item.children && item.children.length" :key="item.path" class="menu-group">
+            <div class="menu-group-title">
+              <i :class="item.icon"></i>
+              <span>{{ item.name }}</span>
+            </div>
+            <a
+              v-if="child.external"
+              :key="child.path + '_ext'"
+              href="javascript:void(0)"
+              class="menu-item menu-item-child"
+              @click="handleItemClick(child)"
+            >
+              <i :class="child.icon"></i>
+              <span>{{ child.name }}</span>
+            </a>
+            <router-link
+              v-else
+              :key="child.path"
+              :to="child.path"
+              class="menu-item menu-item-child"
+              :class="{ active: $route.path === child.path }"
+              @click.native="closeMenu"
+            >
+              <i :class="child.icon"></i>
+              <span>{{ child.name }}</span>
+            </router-link>
+          </div>
+          <!-- 无子菜单：单行链接 -->
+          <router-link
+            v-else
+            :key="item.path"
+            :to="item.path"
             class="menu-item"
-            :class="{ active: $route.path === route.path }"
+            :class="{ active: $route.path === item.path }"
             @click.native="closeMenu"
           >
-            <i v-if="route.meta?.icon" :class="route.meta.icon"></i>
-            <span>{{ getMenuTitle(route) }}</span>
+            <i :class="item.icon"></i>
+            <span>{{ item.name }}</span>
           </router-link>
-        </TransitionGroup>
+        </template>
       </div>
       <div class="menu-footer">
         <p>© {{ new Date().getFullYear() }} {{ $store.state.webSiteInfo.title }}</p>
@@ -33,11 +63,18 @@
 </template>
 
 <script>
+import { getMenuItems } from '@/config/menu'
+
 export default {
   name: 'MobileMenu',
   data() {
     return {
       visible: false
+    }
+  },
+  computed: {
+    menuItems() {
+      return getMenuItems()
     }
   },
   watch: {
@@ -53,23 +90,17 @@ export default {
       }
     }
   },
-  computed: {
-    routes() {
-      const rootRoute = this.$router.options.routes.find(route => route.path === '/')
-      if (!rootRoute || !rootRoute.children) return []
-      
-      return rootRoute.children.filter(route => {
-        if (!route.name || route.meta?.hidden) return false
-        return true
-      })
-    }
-  },
   methods: {
     closeMenu() {
       this.$store.commit('setMobileMenuVisible', false)
     },
-    getMenuTitle(route) {
-      return route.meta?.title?.split(' - ')[0] || route.name
+    handleItemClick(item) {
+      if (item.external) {
+        window.open(item.path, '_blank')
+      } else {
+        this.$router.push(item.path)
+      }
+      this.closeMenu()
     }
   }
 }
@@ -114,6 +145,31 @@ export default {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.menu-group {
+  margin-bottom: 12px;
+}
+
+.menu-group-title {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary-color, #666);
+  border-bottom: 1px solid var(--border-color, #eee);
+  margin-bottom: 4px;
+}
+
+.menu-group-title i {
+  margin-right: 10px;
+  font-size: 1rem;
+}
+
+.menu-item-child {
+  padding-left: 44px;
 }
 
 .menu-item {
