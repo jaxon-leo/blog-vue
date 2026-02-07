@@ -1,0 +1,13 @@
+# IDE
+.idea/
+
+# Dependencies
+node_modules/
+
+# Build
+dist/
+*.local
+
+# Env (optional: remove if you want to commit env templates)
+# .env
+# .env.local

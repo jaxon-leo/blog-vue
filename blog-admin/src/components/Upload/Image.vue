@@ -108,7 +108,6 @@ const handleRemove: UploadProps['onRemove'] = async (uploadFile: any) => {
 
 // 处理上传成功
 const handleSuccess: UploadProps['onSuccess'] = async (response) => {
-  console.log(response)
   if (response.code === 200) {
     const url = response.data
     if (props.multiple) {

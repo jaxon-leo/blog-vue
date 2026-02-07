@@ -241,7 +241,7 @@ const login = () => {
       });
 };
 const sendVerificationCode = () => {
-  console.log("发送验证码")
+  // 发送验证码（可对接后端接口）
 };
 
 /* 滑动验证失败*/

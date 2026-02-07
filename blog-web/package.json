@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@types/dompurify": "^3.2.0",
+    "dompurify": "^3.0.6",
     "animate.css": "^4.1.1",
     "axios": "^1.6.7",
     "element-ui": "^2.15.14",

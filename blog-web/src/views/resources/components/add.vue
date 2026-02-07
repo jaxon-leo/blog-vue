@@ -192,7 +192,6 @@ export default {
         if (valid) {
           addResourceApi(this.uploadForm).then(res => {
             this.$message.success("资源上传成功！");
-            console.log(this.uploadForm)
             // 重置表单
             this.handleClose();
             this.resetForm();
@@ -217,7 +216,6 @@ export default {
       uploadFileApi(formData, 'resource').then((res) => {
         this.uploadForm.link = res.data
         onSuccess(res.data)
-        console.log("上传成功", res.data)
       });
     },
 

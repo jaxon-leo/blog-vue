@@ -24,7 +24,7 @@
             </span>
           </div>
           <div class="moment-content-wrapper">
-            <div class="moment-content" v-html="moment.content"></div>
+            <div class="moment-content" v-html="safeContent(moment.content)"></div>
             <div class="moment-images" v-if="moment.images?.length">
               <img v-for="(img, index) in moment.images" :key="img" v-lazy="img"
                 @click="previewImage(moment.images, index)" />
@@ -47,6 +47,7 @@
 <script>
 import { formatTime } from '@/utils/time'
 import { getMoments } from '@/api/moments'
+import { sanitizeRichHtml } from '@/utils/sanitize'
 
 export default {
   name: 'Moments',
@@ -67,6 +68,9 @@ export default {
   },
 
   methods: {
+    safeContent(html) {
+      return sanitizeRichHtml(html || '')
+    },
     parseImages(images) {
       if (!images) return []
       return images.split(',').filter(img => img)

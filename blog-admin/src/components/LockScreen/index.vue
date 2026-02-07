@@ -93,7 +93,6 @@ const handleUnlock = async () => {
   
   try {
     const {data} = await verifyPassword(password.value)
-    console.log(data)
     if (data) {
       isLocked.value = false
       sessionStorage.removeItem('isLocked')

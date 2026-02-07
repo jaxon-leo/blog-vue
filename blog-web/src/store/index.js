@@ -29,7 +29,11 @@ export default new Vuex.Store({
     },
     SET_USER_INFO(state, userInfo) {
       state.userInfo = userInfo
-      sessionStorage.setItem("user", JSON.stringify(userInfo))
+      if (userInfo == null) {
+        sessionStorage.removeItem('user')
+      } else {
+        sessionStorage.setItem('user', JSON.stringify(userInfo))
+      }
     },
 
     SET_SEARCH_VISIBLE(state, visible) {
@@ -97,12 +101,17 @@ export default new Vuex.Store({
     },
 
     /**
-     * 退出登录
+     * 退出登录（接口失败也清理本地状态，避免卡在已登录态）
      */
     async logout({ commit }) {
-      await logoutApi()
-      removeToken()
-      commit('SET_USER_INFO', null)
+      try {
+        await logoutApi()
+      } catch {
+        // 接口失败仍清理本地状态，避免卡在已登录态
+      } finally {
+        removeToken()
+        commit('SET_USER_INFO', null)
+      }
     },
 
     showLoading({ commit }) {

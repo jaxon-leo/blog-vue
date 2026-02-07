@@ -1,7 +1,7 @@
 <template>
   <div class="about-page">
     <el-card>
-      <div class="about-content" v-html="$store.state.webSiteInfo.aboutMe" ref="content">
+      <div class="about-content" v-html="safeAboutMe" ref="content">
       </div>
       <mj-image-preview ref="imagePreview" />
     </el-card>
@@ -9,9 +9,17 @@
 </template>
 
 <script>
+import { sanitizeRichHtml } from '@/utils/sanitize'
 
 export default {
   name: 'About',
+
+  computed: {
+    safeAboutMe() {
+      const html = this.$store.state.webSiteInfo?.aboutMe
+      return sanitizeRichHtml(html || '')
+    }
+  },
 
   mounted() {
     this.initImagePreview();

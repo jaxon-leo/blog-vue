@@ -298,7 +298,6 @@ export default {
          * 删除图片
          */
         imgDel(pos, $file) {
-            console.log(pos)
             deleteFileApi(pos[0]).then(res => {
                 this.$refs.mdRef.$img2Url(pos, '');
             });

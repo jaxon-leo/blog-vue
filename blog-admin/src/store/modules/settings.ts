@@ -53,7 +53,6 @@ export const useSettingsStore = defineStore({
       if (settings.fontSize) {
         document.documentElement.setAttribute('data-size', settings.fontSize)
       }
-      console.log(settings)
       // 更新设置并立即保存
       Object.assign(this, settings)
       sessionStorage.setItem('settings', JSON.stringify(this.$state))

@@ -1,4 +1,3 @@
-import { title } from "process";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 export const Layout = () => import("@/layouts/index.vue");
@@ -26,6 +25,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 
   {
     path: '/:pathMatch(.*)*',
+    name: 'NotFound',
     component: () => import('@/views/error-page/404.vue'),
     meta: { hidden: true },
   },

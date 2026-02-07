@@ -115,14 +115,14 @@
         <!-- 文章内容 -->
         <article class="article-content">
           <!-- 免费内容 -->
-          <div v-if="article.readType === 0" v-html="article.content"></div>
+          <div v-if="article.readType === 0" v-html="safeContent(article.content)"></div>
 
           <!-- 关注查看内容 -->
           <!-- <div v-if="article.readType === 1" v-html="article.content"></div> -->
 
           <!-- 会员内容 -->
           <div v-else-if="article.readType === 2" class="locked-content member">
-            <div class="preview-content" v-html="getPreviewContent(article.content)"></div>
+            <div class="preview-content" v-html="safeContent(getPreviewContent(article.content))"></div>
             <div class="content-locker">
               <div class="locker-icon">
                 <i class="fas fa-crown"></i>
@@ -135,7 +135,7 @@
 
           <!-- 付费内容 -->
           <div v-else-if="article.readType === 3" class="locked-content paid">
-            <div class="preview-content" v-html="getPreviewContent(article.content)"></div>
+            <div class="preview-content" v-html="safeContent(getPreviewContent(article.content))"></div>
             <div class="content-locker">
               <div class="locker-icon">
                 <i class="fas fa-lock"></i>
@@ -305,6 +305,7 @@ import Comment from '@/components/Comment/index.vue'
 import PaymentDialog from '@/components/PaymentDialog/index.vue'
 import MembershipDialog from '@/components/MembershipDialog/index.vue'
 import { marked } from 'marked'
+import { sanitizeRichHtml } from '@/utils/sanitize'
 
 export default {
   name: 'Article',
@@ -353,6 +354,9 @@ export default {
     }
   },
   methods: {
+    safeContent(html) {
+      return sanitizeRichHtml(html || '')
+    },
     /**
      * 获取文章详情
      */

@@ -8,7 +8,7 @@
         </div>
         <transition name="fade" mode="out-in">
           <div class="moment-item" :key="currentIndex">
-            <span class="moment-text" @click="goToMoments" v-html="moments[currentIndex].content" />
+            <span class="moment-text" @click="goToMoments" v-html="safeContent(moments[currentIndex].content)" />
           </div>
         </transition>
       </div>
@@ -18,6 +18,7 @@
 
 <script>
 import { getMoments } from '@/api/moments'
+import { sanitizeRichHtml } from '@/utils/sanitize'
 
 export default {
   name: 'MomentsList',
@@ -40,6 +41,9 @@ export default {
     }
   },
   methods: {
+    safeContent(html) {
+      return sanitizeRichHtml(html || '')
+    },
     getMomentsList() {
       getMoments({ pageSize: 5, pageNum: 1 }).then(res => {
         if (res.data && res.data.records) {

@@ -72,7 +72,7 @@
                 </button>
               </div>
             </div>
-            <div class="comment-text markdown-body" v-html="comment.content"></div>
+            <div class="comment-text markdown-body" v-html="safeContent(comment.content)"></div>
 
             <!-- 回复列表 -->
             <div v-if="comment.children?.length" class="replies-list">
@@ -103,7 +103,7 @@
                       </button>
                     </div>
                   </div>
-                  <div class="reply-text markdown-body" v-html="reply.content"></div>
+                  <div class="reply-text markdown-body" v-html="safeContent(reply.content)"></div>
 
                   <!-- 添加子评论的回复框 -->
                   <div  v-if="showReplyBox && activeReplyId === reply.id" class="reply-box">
@@ -176,6 +176,7 @@ import { mapState } from "vuex";
 import { getCommentsApi, addCommentApi } from "@/api/article";
 import { formatTime } from "@/utils/time.js";
 import { getBrowserInfo } from "@/utils/browser.js";
+import { sanitizeRichHtml } from '@/utils/sanitize'
 
 export default {
   name: "Comment",
@@ -234,6 +235,9 @@ export default {
     },
   },
   methods: {
+    safeContent(html) {
+      return sanitizeRichHtml(html || '')
+    },
     /**
      * 分页
      */
@@ -313,7 +317,6 @@ export default {
           }
         });
       } catch (error) {
-        console.log(error);
         this.$message.error(error.message);
       }
     },
@@ -362,7 +365,6 @@ export default {
           }
         });
       } catch (error) {
-        console.log(error);
         this.$message.error(error.message);
       }
     },

@@ -41,21 +41,13 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
       host: '0.0.0.0',
       port: Number(env.VITE_APP_PORT) || 3000,
       open: false,
-      proxy: {
-        '/api': {
-          target: env.VITE_APP_API_URL,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-          configure: (proxy, options) => {
-            proxy.on('proxyReq', (proxyReq, req, res) => {
-              console.log('代理请求:', {
-                target: options.target,
-                path: req.url
-              })
-            })
+        proxy: {
+          '/api': {
+            target: env.VITE_APP_API_URL,
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/api/, '')
           }
         }
-      }
     }
   }
 })

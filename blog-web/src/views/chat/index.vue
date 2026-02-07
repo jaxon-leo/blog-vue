@@ -38,7 +38,7 @@
             </div>
             <div class="chat-info">
               <div class="name">{{ chat.name }}</div>
-              <div class="last-message" v-html="currentChat.lastMessage"></div>
+              <div class="last-message" v-html="safeHtml(currentChat.lastMessage)"></div>
             </div>
             <div class="meta">
               <div class="time">{{ currentChat.lastTime }}</div>
@@ -110,7 +110,7 @@
             </div>
             <template v-else>
               <div :data-message-id="msg.id" v-if="msg.type === 'text'" class="message-text"
-                v-html="formatMessageContent(msg.content)" @contextmenu.prevent="showMessageActions(msg, $event)"></div>
+                v-html="safeHtml(formatMessageContent(msg.content))" @contextmenu.prevent="showMessageActions(msg, $event)"></div>
 
               <img v-else-if="msg.type === 'image'" v-lazy="msg.content" :key="'img-' + (msg.id || index)"
                 class="message-image" @click="previewImage(msg.content)" @load="handleImageLoad"
@@ -253,7 +253,7 @@ import { showLoading, hideLoading } from "@/utils/loading";
 import { marked } from 'marked'; // 使用命名导入
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark.css'
-
+import { sanitizeRichHtml } from '@/utils/sanitize'
 
 export default {
   name: "Chat",
@@ -390,6 +390,9 @@ export default {
     window.removeEventListener("resize", this.checkMobile);
   },
   methods: {
+    safeHtml(html) {
+      return sanitizeRichHtml(html || '')
+    },
     switchNav(nav) {
       this.currentNav = nav;
       this.selectedFriend = null;
@@ -468,7 +471,6 @@ export default {
         this.ws = new WebSocket(wsUrl + this.$store.state.userInfo.id);
 
         this.ws.onopen = () => {
-          console.log("WebSocket连接已建立");
           this.reconnectAttempts = 0;
           this.startHeartbeat();
         };
@@ -488,7 +490,6 @@ export default {
         };
 
         this.ws.onclose = () => {
-          console.log("WebSocket连接已关闭");
           this.stopHeartbeat(); // 停止心跳
           this.reconnect(); // 尝试重连
         };
@@ -917,13 +918,11 @@ export default {
       }
 
       if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-        console.log("达到最大重连次数，停止重连");
         this.$message.error("网络连接异常，请刷新页面重试");
         return;
       }
 
       this.reconnectAttempts++;
-      console.log(`第 ${this.reconnectAttempts} 次尝试重连...`);
 
       // 使用指数退避算法计算重连延迟
       const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);

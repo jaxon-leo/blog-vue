@@ -7,7 +7,7 @@
             <i class="fas fa-bullhorn"></i>
           </div>
           <div class="announcement-text">
-            <span v-html="notice.content"></span>
+            <span v-html="safeContent(notice.content)"></span>
           </div>
         </div>
         <div class="announcement-close" @click="close">
@@ -19,7 +19,9 @@
 </template>
 
 <script>
-import { setCookieExpires,getCookie } from '@/utils/cookie'
+import { setCookieExpires, getCookie } from '@/utils/cookie'
+import { sanitizeRichHtml } from '@/utils/sanitize'
+
 export default {
   name: 'Announcement',
   data() {
@@ -32,12 +34,15 @@ export default {
     '$store.state.notice'(val) {
       if (val && val.top) {
         this.notice = val.top[0]
-        if(getCookie('notice') == this.notice.id) return
+        if (getCookie('notice') == this.notice.id) return
         this.visible = true
       }
-    } 
+    }
   },
   methods: {
+    safeContent(html) {
+      return sanitizeRichHtml(html || '')
+    },
     close() {
       setCookieExpires('notice',this.notice.id,365)
       this.visible = false

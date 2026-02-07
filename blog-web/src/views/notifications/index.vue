@@ -59,7 +59,7 @@
                     {{ notification.fromNickname }} 评论了你的文章
                   </span>
 
-                  <div v-html="notification.message"></div>
+                  <div v-html="safeHtml(notification.message)"></div>
                 </span>
 
                 <span v-if="notification.type === 'like'">
@@ -110,6 +110,8 @@
 import { getNotificationsApi, markNotificationAsReadApi, markAllNotificationsAsReadApi,
    getUnreadNotificationsCountApi, deleteNotificationApi } from '@/api/message'
 import { formatTime } from '@/utils/time'
+import { sanitizeRichHtml } from '@/utils/sanitize'
+
 export default {
   name: 'Notifications',
   data() {
@@ -173,6 +175,9 @@ export default {
     }
   },
   methods: {
+    safeHtml(html) {
+      return sanitizeRichHtml(html || '')
+    },
     /**
      * 切换消息分类
      */

@@ -3,8 +3,6 @@ import { ElMessage,ElMessageBox } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { useUserStore } from '@/store/modules/user'
 
-let isRelogin = { show: false }; // 是否显示弹框
-
 const service = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
   timeout: 5000,

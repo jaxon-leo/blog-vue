@@ -4,7 +4,7 @@ import { store } from "@/store";
 import { getRouters } from "@/api/system/auth";
 import { defineStore } from "pinia";
 import { ref } from "vue";
-const modules = import.meta.glob("../../views/**/**.vue");
+const modules = import.meta.glob("../../views/**/*.vue");
 import ParentView from '@/components/ParentView/index.vue'
 
 const Layout = () => import("@/layouts/index.vue");
@@ -22,21 +22,26 @@ const filterAsyncRoutes = (routes: RouteRecordRaw[], isRoot = true) => {
   routes.forEach((route) => {
 
     const tmpRoute = { ...route }; // ES6扩展运算符复制新对象
-    
-    if (!route.name) {
-      tmpRoute.name = route.name;
+
+    // 无 name 时用 path 生成唯一 name，避免路由重复
+    if (!route.name && route.path) {
+      tmpRoute.name = (route.path as string).replace(/^\//, '').replace(/\//g, '_') || undefined;
     }
 
-    if(tmpRoute.component) {
-      if (tmpRoute.component?.toString() == "Layout") {
+    if (tmpRoute.component) {
+      if (tmpRoute.component?.toString() === "Layout") {
         tmpRoute.component = Layout;
       } else if (tmpRoute.component === 'ParentView') {
-        tmpRoute.component = ParentView
-      }  else {
-        const component = modules[`../../views${tmpRoute.component}.vue`];
+        tmpRoute.component = ParentView;
+      } else {
+        // 统一 component 路径格式：保证带前导 /，便于拼接
+        const compPath = typeof tmpRoute.component === 'string'
+          ? (tmpRoute.component.startsWith('/') ? tmpRoute.component : `/${tmpRoute.component}`)
+          : '';
+        const component = compPath ? modules[`../../views${compPath}.vue`] : undefined;
         if (component) {
           tmpRoute.component = component;
-        } 
+        }
       }
 
       if (tmpRoute.children) {
@@ -71,7 +76,11 @@ export const usePermissionStore = defineStore("permission", () => {
 
   // actions
   function setRoutes(newRoutes: RouteRecordRaw[]) {
-    routes.value = constantRoutes.concat(newRoutes);
+    // 合并时去掉静态路由里的 404，只保留动态路由末尾的 404，避免重复
+    const base = constantRoutes.filter(
+      (r) => r.name !== 'NotFound' && r.path !== '/:pathMatch(.*)*'
+    );
+    routes.value = base.concat(newRoutes);
   }
   /**
    * 生成动态路由

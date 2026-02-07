@@ -256,7 +256,7 @@
         <div v-if="myComments.length" v-loading="loading">
           <el-card v-for="comment in myComments" :key="comment.id" class="comment-item">
             <div class="comment-actions">
-              <p class="comment-text" v-html="parseContent(comment.content)"></p>
+              <p class="comment-text" v-html="safeContent(parseContent(comment.content))"></p>
               <el-button type="text" icon="el-icon-delete" class="delete"
                 @click="deleteComment(comment.id)">删除</el-button>
             </div>
@@ -288,7 +288,7 @@
               <div class="comment-actions">
                 <p class="reply-text">
                   <el-tag size="small" type="info">回复 @{{ reply.replyNickname }}</el-tag>
-                <p v-html="parseContent(reply.content)"></p>
+                <p v-html="safeContent(parseContent(reply.content))"></p>
                 </p>
                 <el-button type="text" icon="el-icon-delete" class="delete"
                   @click="deleteReply(reply.id)">删除</el-button>
@@ -466,6 +466,8 @@ import { getAuthRenderApi, sendEmailCodeApi, sendUpdatePwdEmailCodeApi } from '@
 import AvatarCropper from '@/components/common/AvatarCropper.vue'
 import { setCookie } from "@/utils/cookie";
 import { marked } from "marked";
+import { sanitizeRichHtml } from '@/utils/sanitize'
+
 export default {
   name: 'index',
   components: {
@@ -727,6 +729,9 @@ export default {
      */
     parseContent(content) {
       return marked(content || "");
+    },
+    safeContent(html) {
+      return sanitizeRichHtml(html || '');
     },
     /**
      * 分页

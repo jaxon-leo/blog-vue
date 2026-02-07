@@ -54,5 +54,6 @@ var content = `
 链接地址:  ${offiUrl}
 微信/QQ: 1234567890
 `
-console.log(`%c${title1}
-%c${content}`, styleTitle1, styleContent)
+if (import.meta.env.DEV) {
+  console.log(`%c${title1}\n%c${content}`, styleTitle1, styleContent)
+}

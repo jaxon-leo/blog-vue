@@ -52,10 +52,10 @@
         @click="handleResultClick(item)"
       >
         <div class="result-header">
-          <h3 v-html="highlightKeyword(item.title)"></h3>
+          <h3 v-html="safeHighlight(item.title)"></h3>
           <span class="result-date">{{ formatDate(item.createTime) }}</span>
         </div>
-        <p v-html="highlightKeyword(item.summary)"></p>
+        <p v-html="safeHighlight(item.summary)"></p>
         <div class="result-footer">
           <span class="result-category">
             <i class="fas fa-folder"></i>
@@ -86,6 +86,8 @@
 <script>
 import { getArticlesApi } from '@/api/article'
 import { getTagsApi } from '@/api/tags'
+import { sanitizeRichHtml } from '@/utils/sanitize'
+
 export default {
   name: 'SearchDialog',
   
@@ -160,19 +162,20 @@ export default {
         : text
     },
     /**
-     * 高亮关键词
+     * 高亮关键词（结果经 XSS 过滤后输出）
      */
     highlightKeyword(text) {
       if (!this.params.keyword || !text) return text
       const keywords = this.params.keyword.split(/\s+/).filter(k => k)
       let highlightedText = text
-      
       keywords.forEach(keyword => {
         const regex = new RegExp(`(${this.escapeRegExp(keyword)})`, 'gi')
         highlightedText = highlightedText.replace(regex, '<mark>$1</mark>')
       })
-      
       return highlightedText
+    },
+    safeHighlight(text) {
+      return sanitizeRichHtml(this.highlightKeyword(text) || '')
     },
     /**
      * 转义正则表达式

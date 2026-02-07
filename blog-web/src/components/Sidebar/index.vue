@@ -37,7 +37,7 @@
       <div class="announcement-content">
         <div class="announcement-item" v-for="(item, index) in announcements" :key="index">
           <!-- <i :class="item.icon"></i> -->
-          <span v-html="item.content"></span>
+          <span v-html="sanitizeRichHtml(item.content || '')"></span>
         </div>
       </div>
     </el-card>
@@ -71,6 +71,7 @@
 <script>
 import { getRecommendArticlesApi } from '@/api/article'
 import Tag from './components/tagCloud.vue'
+import { sanitizeRichHtml } from '@/utils/sanitize'
 
 export default {
   name: 'Sidebar',
