@@ -19,7 +19,7 @@
               <i :class="item.icon"></i>
               <span>{{ item.name }}</span>
             </div>
-            <template v-for="child in item.children" :key="child.path">
+            <template v-for="child in item.children">
               <a
                 v-if="child.external"
                 :key="child.path + '_ext'"
