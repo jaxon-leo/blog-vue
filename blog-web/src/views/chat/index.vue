@@ -2238,13 +2238,14 @@ export default {
       left: 80px;
       right: 0;
       bottom: 0;
-      min-height: 120px;
+      min-height: 90px;
       padding-bottom: calc(#{$spacing-md} + env(safe-area-inset-bottom, 0px));
-      flex-direction: column;
-      align-items: stretch;
+      flex-direction: row;
+      align-items: flex-end;
 
       .input-toolbar {
         flex-shrink: 0;
+        margin-right: $spacing-sm;
       }
 
       .input-area {
@@ -2253,7 +2254,11 @@ export default {
         min-width: 0;
       }
 
-      .input-wrapper,
+      .input-wrapper {
+        min-width: 0;
+        flex: 1;
+      }
+
       .message-input {
         min-width: 0;
         flex: 1;
