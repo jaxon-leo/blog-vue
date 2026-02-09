@@ -19,27 +19,29 @@
               <i :class="item.icon"></i>
               <span>{{ item.name }}</span>
             </div>
-            <a
-              v-if="child.external"
-              :key="child.path + '_ext'"
-              href="javascript:void(0)"
-              class="menu-item menu-item-child"
-              @click="handleItemClick(child)"
-            >
-              <i :class="child.icon"></i>
-              <span>{{ child.name }}</span>
-            </a>
-            <router-link
-              v-else
-              :key="child.path"
-              :to="child.path"
-              class="menu-item menu-item-child"
-              :class="{ active: $route.path === child.path }"
-              @click.native="closeMenu"
-            >
-              <i :class="child.icon"></i>
-              <span>{{ child.name }}</span>
-            </router-link>
+            <template v-for="child in item.children" :key="child.path">
+              <a
+                v-if="child.external"
+                :key="child.path + '_ext'"
+                href="javascript:void(0)"
+                class="menu-item menu-item-child"
+                @click="handleItemClick(child)"
+              >
+                <i :class="child.icon"></i>
+                <span>{{ child.name }}</span>
+              </a>
+              <router-link
+                v-else
+                :key="child.path"
+                :to="child.path"
+                class="menu-item menu-item-child"
+                :class="{ active: $route.path === child.path }"
+                @click.native="closeMenu"
+              >
+                <i :class="child.icon"></i>
+                <span>{{ child.name }}</span>
+              </router-link>
+            </template>
           </div>
           <!-- 无子菜单：单行链接 -->
           <router-link

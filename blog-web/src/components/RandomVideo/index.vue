@@ -18,7 +18,11 @@
       size="400px"
     >
       <div class="video-container video-drawer">
-        <video ref="video" controls autoplay :src="videoSrc"></video>
+        <video ref="video" controls autoplay playsinline :src="videoSrc" @loadedmetadata="onVideoLoaded"></video>
+        <div class="volume-control">
+          <i :class="volumeMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up'" @click="toggleMute" class="volume-icon" title="音量"></i>
+          <el-slider v-model="volume" :min="0" :max="100" :show-tooltip="true" style="width: 80px" @input="onVolumeChange"></el-slider>
+        </div>
       </div>
       <div class="video-actions">
         <el-button type="primary" :icon="btnIcon" size="small" @click="operateVideo">{{ btnContent }}</el-button>
@@ -36,7 +40,11 @@
       @close="syncDrawerClose"
     >
       <div class="video-container video-fullscreen">
-        <video ref="videoMobile" controls autoplay :src="videoSrc"></video>
+        <video ref="videoMobile" controls autoplay playsinline :src="videoSrc" @loadedmetadata="onVideoLoaded"></video>
+        <div class="volume-control volume-control-mobile">
+          <i :class="volumeMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up'" @click="toggleMute" class="volume-icon" title="音量"></i>
+          <el-slider v-model="volume" :min="0" :max="100" :show-tooltip="true" @input="onVolumeChange"></el-slider>
+        </div>
       </div>
       <div class="video-actions">
         <el-button type="primary" :icon="btnIcon" size="small" @click="operateVideo">{{ btnContent }}</el-button>
@@ -48,6 +56,7 @@
 
 <script>
 const MOBILE_BREAKPOINT = 768
+const DEFAULT_VOLUME = 0.3 // 默认音量 30%
 
 export default {
   name: 'RandomVideo',
@@ -59,7 +68,10 @@ export default {
       isPlaying: true,
       btnContent: '暂停',
       btnIcon: 'el-icon-video-pause',
-      isMobile: false
+      isMobile: false,
+      volume: 30, // 0-100，默认 30%
+      volumeMuted: false,
+      volumeBeforeMute: 30
     }
   },
   watch: {
@@ -90,8 +102,39 @@ export default {
     nextVideo() {
       this.videoSrc = this.videoSrc + '?temps=' + new Date().getTime()
     },
+    getVideoEl() {
+      return this.isMobile ? this.$refs.videoMobile : this.$refs.video
+    },
+    onVideoLoaded() {
+      const video = this.getVideoEl()
+      if (video) {
+        video.volume = DEFAULT_VOLUME
+        this.volume = Math.round(DEFAULT_VOLUME * 100)
+      }
+    },
+    onVolumeChange(val) {
+      const video = this.getVideoEl()
+      if (video) {
+        video.volume = val / 100
+        this.volumeMuted = val === 0
+      }
+    },
+    toggleMute() {
+      const video = this.getVideoEl()
+      if (!video) return
+      if (this.volumeMuted) {
+        this.volume = this.volumeBeforeMute || 30
+        video.volume = this.volume / 100
+        this.volumeMuted = false
+      } else {
+        this.volumeBeforeMute = this.volume
+        this.volume = 0
+        video.volume = 0
+        this.volumeMuted = true
+      }
+    },
     operateVideo() {
-      const video = this.isMobile ? this.$refs.videoMobile : this.$refs.video
+      const video = this.getVideoEl()
       if (!video) return
       if (this.isPlaying) {
         video.pause()
@@ -122,11 +165,50 @@ export default {
 .video-container {
   padding: $spacing-sm;
   border-radius: $border-radius-md;
+  position: relative;
+
   video {
     display: block;
     width: 100%;
     max-width: 100%;
     border-radius: $border-radius-md;
+  }
+
+  .volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 8px 0;
+
+    .volume-icon {
+      font-size: 20px;
+      cursor: pointer;
+      color: $primary;
+      flex-shrink: 0;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  .volume-control-mobile {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+
+    .volume-icon {
+      font-size: 24px;
+      min-width: 32px;
+      text-align: center;
+    }
+
+    :deep(.el-slider) {
+      flex: 1;
+      min-width: 100px;
+    }
   }
 }
 

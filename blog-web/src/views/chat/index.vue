@@ -2227,12 +2227,37 @@ export default {
     border-top: 1px solid var(--border-color);
     background: var(--card-bg);
     display: flex;
+    flex-direction: column;
     gap: $spacing-md;
     z-index: 10;
+    min-height: 100px;
+    flex-shrink: 0;
 
     @media screen and (max-width: 768px) {
-      position: fixed; // 固定定位
-      left: 80px; // 与左侧导航栏对齐
+      position: fixed;
+      left: 80px;
+      right: 0;
+      bottom: 0;
+      min-height: 120px;
+      padding-bottom: calc(#{$spacing-md} + env(safe-area-inset-bottom, 0px));
+      flex-direction: column;
+      align-items: stretch;
+
+      .input-toolbar {
+        flex-shrink: 0;
+      }
+
+      .input-area {
+        flex: 1;
+        min-height: 50px;
+        min-width: 0;
+      }
+
+      .input-wrapper,
+      .message-input {
+        min-width: 0;
+        flex: 1;
+      }
     }
 
     .input-toolbar {
@@ -2582,7 +2607,9 @@ export default {
   }
 
   .voice-record-btn {
-    width: 500px !important;
+    min-width: 120px;
+    width: 100%;
+    max-width: 500px;
 
     border: 1px solid var(--border-color);
     border-radius: 8px;
