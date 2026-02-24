@@ -19,7 +19,8 @@ export function sanitizeHtml(html, options = {}) {
  */
 export function sanitizeRichHtml(html) {
   return sanitizeHtml(html, {
-    ADD_ATTR: ['target'],
-    ADD_TAGS: ['mark']
+    ADD_ATTR: ['target', 'data-src'],
+    ADD_TAGS: ['mark'],
+    ALLOW_DATA_ATTR: true
   })
 }

@@ -416,11 +416,31 @@ export default {
      * 为文章内容中的图片添加懒加载
      */
     addLazyLoadToImages(content) {
-      // 使用data-src来存储实际图片地址，并添加lazy-image类用于识别
-      return content.replace(
-        /<img([^>]*)src="([^"]*)"([^>]*)>/gi,
-        '<img$1src="' + this.getLoadingImage() + '" data-src="$2" class="lazy-image"$3>'
-      )
+      if (!content) return ''
+
+      // 使用 DOM 解析方式处理，更可靠
+      const div = document.createElement('div')
+      div.innerHTML = content
+
+      const images = div.querySelectorAll('img')
+      images.forEach(img => {
+        // 跳过已经是懒加载的图片
+        if (img.classList.contains('lazy-image') || img.hasAttribute('data-src')) {
+          return
+        }
+
+        const originalSrc = img.getAttribute('src')
+        if (originalSrc) {
+          // 保存原图地址到 data-src
+          img.setAttribute('data-src', originalSrc)
+          // 设置加载中的占位图
+          img.setAttribute('src', this.getLoadingImage())
+          // 添加懒加载类
+          img.classList.add('lazy-image')
+        }
+      })
+
+      return div.innerHTML
     },
     /**
      * 获取加载中的图片
@@ -666,7 +686,7 @@ export default {
       })
 
       // 监听所有带有 lazy-image 类的图片
-      setTimeout(() => {
+      this.$nextTick(() => {
         const lazyImages = document.querySelectorAll('.lazy-image')
         lazyImages.forEach(img => {
           observer.observe(img)
@@ -682,7 +702,7 @@ export default {
           img.style.cursor = 'zoom-in'
           img.addEventListener('click', this.handleImageClick)
         })
-      }, 200)
+      })
     },
     /**
      * 处理图片点击
