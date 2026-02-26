@@ -19,7 +19,10 @@
         <el-table-column label="内容" align="center" prop="content" show-overflow-tooltip />
         <el-table-column label="图片" align="center" prop="content">
           <template #default="scope">
-            <el-image v-for="item in parseImage(scope.row.images)" :src="item" style="width: 50px; height: 50px" />
+            <div v-if="parseImage(scope.row.images)[0] !== '' && parseImage(scope.row.images).length > 0">
+              <el-image v-for="item in parseImage(scope.row.images)" :src="item" style="width: 50px; height: 50px" />
+            </div>
+            <span v-else>无</span>
           </template>
         </el-table-column>
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
@@ -136,7 +139,14 @@ const rules = reactive<FormRules>({
   ],
 })
 
-const parseImage = (images: string) => {
+const parseImage = (images: string | string[]) => {
+  if (!images) {
+    return ['']
+  }
+  // 如果是数组，直接返回；如果是字符串，则分割
+  if (Array.isArray(images)) {
+    return images;
+  }
   return images.split(',')
 }
 
@@ -200,7 +210,7 @@ const handleAdd = () => {
   dialog.visible = true
   momentForm.id = undefined
   momentForm.content = ''
-  momentForm.images = ''
+  momentForm.images = [] // 初始化为空数组以便与UploadImage组件兼容
 }
 
 // 修改说说
@@ -209,7 +219,8 @@ const handleUpdate = (row: any) => {
   dialog.title = '修改说说'
   dialog.visible = true
   Object.assign(momentForm, row)
-  momentForm.images = momentForm.images.split(',')
+  // 如果图片为空，则设置为空数组，否则分割成数组
+  momentForm.images = row.images ? row.images.split(',') : []
 }
 
 // 富文本编辑器创建完成
@@ -225,8 +236,11 @@ const submitForm = async () => {
     if (valid) {
       submitLoading.value = true
       try {
-        if (momentForm.images && momentForm.images.length > 0) { 
+        // 将图片数组转换为逗号分隔的字符串，如果没有图片则设为空字符串
+        if (momentForm.images && Array.isArray(momentForm.images) && momentForm.images.length > 0) { 
           momentForm.images = momentForm.images.join(',')
+        } else {
+          momentForm.images = '' // 如果没有图片，设置为空字符串
         }
         if (dialog.type === 'add') {
           await addSysMomentApi(momentForm)
