@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        .header {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+        .header-btn {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+        .header-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background: white;
+        }
+        .header-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: #667eea;
+        }
+        .blog-btn {
+            position: relative;
+            overflow: visible;
+        }
+        .blog-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .default-blog-icon {
+            width: 22px;
+            height: 22px;
+            fill: #667eea;
+        }
+        .container {
+            text-align: center;
+            padding: 60px 80px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        .contact-grid {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .contact-item {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .contact-item:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+        .contact-item svg {
+            width: 35px;
+            height: 35px;
+            fill: white;
+        }
+        .divider {
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 25px auto;
+            border-radius: 2px;
+        }
+        @media (max-width: 600px) {
+            .header {
+                top: 15px;
+                right: 15px;
+                gap: 10px;
+            }
+            .header-btn {
+                width: 40px;
+                height: 40px;
+            }
+            .header-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+            .container {
+                padding: 40px 30px;
+                margin: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .contact-item {
+                width: 70px;
+                height: 70px;
+            }
+            .contact-item svg {
+                width: 30px;
+                height: 30px;
+            }
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.98);
+            padding: 30px 50px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .toast.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        .toast-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: checkmark 0.5s ease;
+        }
+        @keyframes checkmark {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .toast-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+        .toast-text {
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .lang-dropdown {
+            position: relative;
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 8px 0;
+            min-width: 120px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 200;
+        }
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dropdown-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #333;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .dropdown-item.active::before {
+            content: '✓';
+            font-weight: bold;
+        }
+        .tooltip {
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 150;
+        }
+        .header-btn:hover .tooltip,
+        .blog-btn:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        .contact-item {
+            position: relative;
+        }
+        .contact-tooltip {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 150;
+        }
+        .contact-item:hover .contact-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="lang-dropdown">
+            <div class="header-btn" id="langBtn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+                </svg>
+            </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <div class="dropdown-item active" data-lang="en" onclick="switchLang('en')">English</div>
+                <div class="dropdown-item" data-lang="zh" onclick="switchLang('zh')">中文</div>
+            </div>
+        </div>
+        <a href="https://dejavu.zone" class="header-btn blog-btn" target="_blank" id="blogBtn" style="position: relative;">
+            <img src="https://minio.dejavu.zone/dejavu-blog/common/logo.jpg" alt="blog" class="blog-icon" id="blogIcon" onload="this.style.display='block'; document.getElementById('defaultBlogIcon').style.display='none';" onerror="this.style.display='none'">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="default-blog-icon" id="defaultBlogIcon">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+            </svg>
+            <span class="tooltip" id="blogTooltip">Visit Blog</span>
+        </a>
+    </div>
+
+    <div class="container">
+        <h1 id="title">Contact Us</h1>
+        <div class="divider"></div>
+        <div class="contact-grid">
+            <div class="contact-item" onclick="copyEmail()">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+                <span class="contact-tooltip" id="emailTooltip">Email</span>
+            </div>
+            <div class="contact-item" onclick="copyQQ()">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.003 2c-2.265 0-6.29 1.364-6.29 7.325v1.195S3.55 14.96 3.55 17.474c0 .665.17 1.025.281 1.025.114 0 .902-.484 1.748-2.072 0 0-.18 2.197 1.904 3.967 0 0-1.77.495-1.77 1.182 0 .686 4.078.43 6.29.43 2.21 0 6.287.257 6.287-.43 0-.687-1.768-1.182-1.768-1.182 2.085-1.77 1.905-3.967 1.905-3.967.845 1.588 1.634 2.072 1.746 2.072.111 0 .283-.36.283-1.025 0-2.514-2.166-6.954-2.166-6.954V9.325C18.29 3.364 14.268 2 12.003 2z"/>
+                </svg>
+                <span class="contact-tooltip" id="qqTooltip">QQ</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+        </div>
+        <div class="toast-text" id="toastText">复制成功</div>
+    </div>
+
+    <script>
+        const i18n = {
+            zh: {
+                title: '联系我们',
+                copied: '复制成功',
+                email: '邮箱已复制',
+                qq: 'QQ已复制',
+                emailTooltip: '邮箱',
+                qqTooltip: 'QQ',
+                blogTooltip: '访问博客'
+            },
+            en: {
+                title: 'Contact Us',
+                copied: 'Copied!',
+                email: 'Email copied',
+                qq: 'QQ copied',
+                emailTooltip: 'Email',
+                qqTooltip: 'QQ',
+                blogTooltip: 'Visit Blog'
+            }
+        };
+        let currentLang = 'en';
+        let dropdownOpen = false;
+
+        const langBtn = document.getElementById('langBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        langBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownOpen = !dropdownOpen;
+            dropdownMenu.classList.toggle('show', dropdownOpen);
+        });
+
+        document.addEventListener('click', () => {
+            dropdownOpen = false;
+            dropdownMenu.classList.remove('show');
+        });
+
+        function switchLang(lang) {
+            currentLang = lang;
+            document.getElementById('title').textContent = i18n[currentLang].title;
+            document.getElementById('emailTooltip').textContent = i18n[currentLang].emailTooltip;
+            document.getElementById('qqTooltip').textContent = i18n[currentLang].qqTooltip;
+            document.getElementById('blogTooltip').textContent = i18n[currentLang].blogTooltip;
+            
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.lang === lang);
+            });
+            
+            dropdownOpen = false;
+            dropdownMenu.classList.remove('show');
+        }
+
+        function copyEmail() {
+            const email = 'jaxonleo.cn@gmail.com';
+            navigator.clipboard.writeText(email).then(() => {
+                showToast(i18n[currentLang].email);
+            }).catch(() => {
+                const input = document.createElement('input');
+                input.value = email;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast(i18n[currentLang].email);
+            });
+        }
+
+        function copyQQ() {
+            const qq = '1205592132';
+            navigator.clipboard.writeText(qq).then(() => {
+                showToast(i18n[currentLang].qq);
+            }).catch(() => {
+                const input = document.createElement('input');
+                input.value = qq;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast(i18n[currentLang].qq);
+            });
+        }
+
+        function showToast(text) {
+            const overlay = document.getElementById('overlay');
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toastText');
+            toastText.textContent = text;
+            overlay.classList.add('show');
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                overlay.classList.remove('show');
+                toast.classList.remove('show');
+            }, 1500);
+        }
+
+        document.getElementById('overlay').addEventListener('click', () => {
+            document.getElementById('overlay').classList.remove('show');
+            document.getElementById('toast').classList.remove('show');
+        });
+    </script>
+</body>
+</html>
