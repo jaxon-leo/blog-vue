@@ -100,7 +100,7 @@
             </el-select>
           </el-form-item>
           <!-- 显示 param 值 -->
-          <el-form-item v-if="form.type" label="参数">
+          <el-form-item v-if="form.type && getSelectedParams(form.type).length > 0" label="参数">
               <!-- 优化：首先找到对应的 selectedType -->
               <el-tag v-for="(param, index) in getSelectedParams(form.type)" :key="index" >
                 <!-- 包裹 el-tag 的 el-tooltip 组件 -->
@@ -242,7 +242,10 @@ const getList = () => {
 }
 const getSelectedParams = (type: any) => {
   const selectedType = templateTypeOptions.value.find(item => item.value === type);
-  return selectedType ? selectedType.params : [];
+  //确返回的是数组，即使 params 不存在或为空
+  return selectedType && Array.isArray(selectedType.params) && selectedType.params.length > 0 
+    ? selectedType.params 
+    : [];
 }
 // 打开弹窗并显示 HTML 内容
 const openPreviewDialog = (content, subject) => {
