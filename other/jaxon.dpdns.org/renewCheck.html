@@ -80,7 +80,7 @@
 <script>
     // 获取最近续订时间的接口
     function fetchLastRenewTime() {
-        fetch('https://dejavu.zone/email/check/getDomainCheckTime')
+        fetch('https://admin.dejavu.zone/admin/email/check/getDomainCheckTime')
             .then(response => response.text())
             .then(time => {
                 if (time) {
@@ -101,7 +101,7 @@
         confirmBtn.disabled = true;
 
         // 调用确认续订接口
-        fetch('https://dejavu.zone/email/check/domain', {
+        fetch('https://admin.dejavu.zone/admin/email/check/domain', {
             method: 'GET'
         })
             .then(response => {
