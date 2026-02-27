@@ -62,8 +62,8 @@
           </template>
         </el-table-column>
         <el-table-column label="创建人" align="center" prop="createUser" width="100"/>
-        <el-table-column label="创建时间" align="center" width="150" prop="createTime"/>
-        <el-table-column label="更新时间" align="center" width="150" prop="updateTime"/>
+        <el-table-column label="创建时间" align="center" width="160" prop="createTime"/>
+        <el-table-column label="更新时间" align="center" width="160" prop="updateTime"/>
         <el-table-column label="操作" align="center" width="200" fixed="right">
           <template #default="scope">
             <el-button type="primary" link icon="Edit" @click="handleUpdate(scope.row)">修改

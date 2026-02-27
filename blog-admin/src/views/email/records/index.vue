@@ -31,7 +31,7 @@
       <el-table v-loading="loading" :data="dataList" style="width: 100%"
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="35" heigth="355" align="center" />
-        <el-table-column label="发件时间" align="center" prop="sendTime" width="150" />
+        <el-table-column label="发件时间" align="center" prop="sendTime" width="160" />
         <el-table-column label="收件人" align="center" prop="toUser" width="150" />
         <el-table-column label="邮件主题" align="center" prop="subject" width="250" show-overflow-tooltip />
         <el-table-column label="模版类型" align="center" prop="type" width="100">
